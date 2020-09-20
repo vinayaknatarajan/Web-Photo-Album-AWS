@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: CD Test Lambda
+
+Resources:
+  indexTest:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./index
+      Description: "Lambda function for indexing"
+      MemorySize: 128
+      Timeout: 30
+      Role: "arn:aws:iam::544746101696:role/IndexPhotosPolicy"
+      Environment:
+        Variables:
+          REGION: us-east-1
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0df26723c4e187b78
+        SubnetIds:
+          - subnet-08979b3997b5c4361
+          - subnet-078adfb0f14dee615
+  searchTest:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./search
+      Description: "Lambda function for searching"
+      MemorySize: 128
+      Timeout: 30
+      Role: "arn:aws:iam::544746101696:role/SearchPhotosPolicy"
+      Events:
+        testAPI:
+          Type: Api
+          Properties:
+            Path: /search
+            Method: get
+      Environment:
+        Variables:
+          REGION: us-east-1
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0df26723c4e187b78
+        SubnetIds:
+          - subnet-08979b3997b5c4361
+          - subnet-078adfb0f14dee615
